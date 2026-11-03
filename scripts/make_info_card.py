@@ -4,6 +4,7 @@ Generate an animated neofetch-style SVG info card for Darshan Satbhai.
 Plays a staggered line-by-line slide/fade-in animation once and freezes.
 Supports STATIC=1 environment variable for frozen state previews.
 """
+import html
 import os
 import sys
 
@@ -98,17 +99,19 @@ for idx, (key, val, kcol, vcol, is_header) in enumerate(info_lines):
     delay = 0.08 * (idx + 1)
     anim_style = "" if STATIC else f' style="animation-delay: {delay:.2f}s;"'
     cls = "" if STATIC else ' class="line"'
+    safe_key = html.escape(key)
+    safe_val = html.escape(val)
 
     parts.append(f'<g{cls}{anim_style}>')
     if is_header:
-        parts.append(f'<text x="{PAD + 12}" y="{y}" fill="{kcol}" font-size="22" font-weight="700">{key}</text>')
-        parts.append(f'<text x="{PAD + 12}" y="{y + 16}" fill="{vcol}" font-size="16">{val}</text>')
+        parts.append(f'<text x="{PAD + 12}" y="{y}" fill="{kcol}" font-size="22" font-weight="700">{safe_key}</text>')
+        parts.append(f'<text x="{PAD + 12}" y="{y + 16}" fill="{vcol}" font-size="16">{safe_val}</text>')
     else:
         # Prompt symbol + Key + Value
         parts.append(f'<text x="{PAD + 12}" y="{y}" fill="{CORAL}" font-size="18" font-weight="700">&gt;</text>')
-        parts.append(f'<text x="{PAD + 34}" y="{y}" fill="{kcol}" font-size="18" font-weight="600">{key}:</text>')
+        parts.append(f'<text x="{PAD + 34}" y="{y}" fill="{kcol}" font-size="18" font-weight="600">{safe_key}:</text>')
         val_x = PAD + 180
-        parts.append(f'<text x="{val_x}" y="{y}" fill="{vcol}" font-size="18">{val}</text>')
+        parts.append(f'<text x="{val_x}" y="{y}" fill="{vcol}" font-size="18">{safe_val}</text>')
     parts.append('</g>')
 
 # Color blocks row at bottom
